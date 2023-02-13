@@ -1,8 +1,6 @@
 package ru.top.models;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class Player {
     private final String name;
@@ -32,7 +30,24 @@ public class Player {
      * null - если так защититься нельзя
      */
     public Card defend(Card card, Suit trumpSuit) {
-        return null;
+        Card defend;
+        defend = cards.stream()
+                .filter(c -> c.getSuit().equals(card.getSuit()) &&
+                        c.getValue() > card.getValue())
+                .min(Comparator.comparingInt(Card::getValue))
+                .orElse(null);
+        if (defend == null && card.getSuit() != trumpSuit )
+            defend = cards.stream()
+                    .filter(c -> c.getSuit().equals(trumpSuit))
+                    .min(Comparator.comparingInt(Card::getValue))
+                    .orElse(null);
+        if (defend != null) {
+            Suit suit = defend.getSuit();
+            int num = defend.getValue();
+            cards.removeIf(c -> c.getSuit().equals(suit) &&
+                    c.getValue() == num );
+        }
+        return defend;
     }
 
 
